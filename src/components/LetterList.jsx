@@ -1,6 +1,6 @@
 import LetterCard from './LetterCard';
 
-function LetterList({ letters }) {
+function LetterList({ letters, onDelete }) {
     if (letters.length === 0) {
         return (
             <div className="text-center py-20 bg-stone-50/50 rounded-3xl border border-stone-100 border-dashed">
@@ -12,12 +12,12 @@ function LetterList({ letters }) {
     }
 
     // Sort letters: Earliest open date first
-    const sortedLetters = [...letters].sort((a, b) => new Date(a.openDate) - new Date(b.openDate));
+    const sortedLetters = [...letters].sort((a, b) => new Date(a.unlock_date) - new Date(b.unlock_date));
 
     return (
         <div className="relative border-l-2 border-stone-200 ml-2 space-y-8 pl-6 py-2">
             {sortedLetters.map((letter) => (
-                <LetterCard key={letter.id} letter={letter} />
+                <LetterCard key={letter.id} letter={letter} onDelete={onDelete} />
             ))}
         </div>
     );

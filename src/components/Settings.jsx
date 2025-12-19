@@ -1,23 +1,21 @@
 import { useState } from 'react';
 
-function Settings({ letters, setLetters, onBack }) {
+function Settings({ letters, setLetters, onBack, onDeleteAll }) {
     const [confirmClear, setConfirmClear] = useState(false);
 
     const handleClearData = () => {
-        localStorage.removeItem('future_letters');
-        setLetters([]);
+        // Call the parent handler which triggers the API
+        if (onDeleteAll) {
+            onDeleteAll();
+        } else {
+            // Fallback for offline/local mode if ever used (legacy)
+            localStorage.removeItem('future_letters');
+            setLetters([]);
+        }
         setConfirmClear(false);
     };
 
-    const handleExport = () => {
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(letters, null, 2));
-        const downloadAnchorNode = document.createElement('a');
-        downloadAnchorNode.setAttribute("href", dataStr);
-        downloadAnchorNode.setAttribute("download", "time_capsule_backup.json");
-        document.body.appendChild(downloadAnchorNode);
-        downloadAnchorNode.click();
-        downloadAnchorNode.remove();
-    };
+
 
     return (
         <div className="bg-white p-8 rounded-3xl shadow-sm border border-stone-100 max-w-lg mx-auto w-full animate-fade-in">
@@ -28,19 +26,6 @@ function Settings({ letters, setLetters, onBack }) {
 
             <div className="space-y-6">
                 <div>
-                    <h3 className="font-bold text-stone-700 mb-2">Data Management</h3>
-                    <p className="text-sm text-stone-500 mb-4">Control your local data. Everything is stored in your browser.</p>
-
-                    <button
-                        onClick={handleExport}
-                        className="w-full flex items-center justify-between p-4 bg-stone-50 hover:bg-stone-100 rounded-xl transition-colors text-left group border border-stone-200"
-                    >
-                        <span className="font-medium text-stone-700">Export Backup (JSON)</span>
-                        <span className="text-xl group-hover:translate-x-1 transition-transform">⬇️</span>
-                    </button>
-                </div>
-
-                <div className="pt-4 border-t border-stone-100">
                     <h3 className="font-bold text-red-800 mb-2">Danger Zone</h3>
 
                     {!confirmClear ? (

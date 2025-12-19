@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 function Trends({ letters, onBack }) {
     const stats = useMemo(() => {
         const total = letters.length;
-        const unlocked = letters.filter(l => new Date() >= new Date(l.openDate)).length;
+        const unlocked = letters.filter(l => new Date() >= new Date(l.unlock_date)).length;
         const moodCounts = letters.reduce((acc, l) => {
             const m = l.mood || '😐'; // Fallback
             acc[m] = (acc[m] || 0) + 1;

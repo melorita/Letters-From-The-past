@@ -25,8 +25,8 @@ function LetterForm({ onSave }) {
 
         onSave({
             title: title || 'Untitled Letter',
-            content,
-            openDate,
+            message: content,
+            unlock_date: openDate,
             mood: mood.emoji,
         });
 

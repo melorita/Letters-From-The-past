@@ -13,7 +13,12 @@ function Sidebar({ letters, onNavigate }) {
 
     // Calculate stats
     const totalLetters = letters.length;
-    const lockedLetters = letters.filter(l => new Date() < new Date(l.openDate)).length;
+    // Check if letter has status 'locked' OR if unlock_date is in future
+    const lockedLetters = letters.filter(l => {
+        if (l.status === 'locked') return true;
+        if (l.unlock_date) return new Date() < new Date(l.unlock_date);
+        return false;
+    }).length;
     const openedLetters = totalLetters - lockedLetters;
 
     useEffect(() => {
