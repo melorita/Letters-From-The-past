@@ -12,6 +12,14 @@ function Login({ onLoginSuccess, onShowRegister }) {
         e.preventDefault();
         setError('');
         setSuccess('');
+
+        // Strict Email Validation
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,10}$/;
+        if (!emailRegex.test(email)) {
+            setError('Please enter a valid email address (e.g., name@gmail.com)');
+            return;
+        }
+
         setLoading(true);
 
         try {
@@ -35,38 +43,38 @@ function Login({ onLoginSuccess, onShowRegister }) {
     return (
         <div className="w-full flex items-center justify-center p-6">
             <div className="w-full max-w-md relative animate-in fade-in slide-in-from-bottom-4 duration-1000">
-                <div className="bg-white/80 backdrop-blur-xl rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-stone-100 p-10 md:p-12">
+                <div className="bg-white/80 dark:bg-stone-900/80 backdrop-blur-xl rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-stone-100 dark:border-stone-800 p-10 md:p-12 transition-colors duration-300">
                     <div className="text-center mb-10">
-                        <div className="w-16 h-16 bg-stone-50 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-inner ring-1 ring-stone-100">
+                        <div className="w-16 h-16 bg-stone-50 dark:bg-stone-800 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-inner ring-1 ring-stone-100 dark:ring-stone-700">
                             <span className="text-3xl">🕰️</span>
                         </div>
-                        <h2 className="text-3xl font-serif font-bold text-stone-800 tracking-tight">Welcome back</h2>
-                        <p className="text-stone-400 mt-2 font-medium tracking-tight">Pause, reflect, and sign in</p>
+                        <h2 className="text-3xl font-serif font-bold text-stone-800 dark:text-stone-100 tracking-tight">Welcome back</h2>
+                        <p className="text-stone-400 dark:text-stone-500 mt-2 font-medium tracking-tight">Pause, reflect, and sign in</p>
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="group">
-                            <label className="block text-[11px] font-bold text-stone-400 uppercase tracking-[0.15em] mb-2 px-1 transition-colors group-focus-within:text-stone-600">
+                            <label className="block text-[11px] font-bold text-stone-400 dark:text-stone-500 uppercase tracking-[0.15em] mb-2 px-1 transition-colors group-focus-within:text-stone-600 dark:group-focus-within:text-stone-300">
                                 Email Address
                             </label>
                             <input
                                 type="email"
                                 required
-                                className="w-full px-6 py-4 bg-stone-50/50 border border-stone-100 rounded-2xl focus:bg-white focus:ring-4 focus:ring-stone-100 focus:border-stone-200 outline-none transition-all duration-300 text-stone-700 placeholder:text-stone-300"
-                                placeholder="hello@future.me"
+                                className="w-full px-6 py-4 bg-stone-50/50 dark:bg-stone-800/50 border border-stone-100 dark:border-stone-800 rounded-2xl focus:bg-white dark:focus:bg-stone-800 focus:ring-4 focus:ring-stone-100 dark:focus:ring-stone-800 focus:border-stone-200 dark:focus:border-stone-700 outline-none transition-all duration-300 text-stone-700 dark:text-stone-200 placeholder:text-stone-300 dark:placeholder:text-stone-600"
+                                placeholder="you@gmail.com"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                             />
                         </div>
 
                         <div className="group">
-                            <label className="block text-[11px] font-bold text-stone-400 uppercase tracking-[0.15em] mb-2 px-1 transition-colors group-focus-within:text-stone-600">
+                            <label className="block text-[11px] font-bold text-stone-400 dark:text-stone-500 uppercase tracking-[0.15em] mb-2 px-1 transition-colors group-focus-within:text-stone-600 dark:group-focus-within:text-stone-300">
                                 Password
                             </label>
                             <input
                                 type="password"
                                 required
-                                className="w-full px-6 py-4 bg-stone-50/50 border border-stone-100 rounded-2xl focus:bg-white focus:ring-4 focus:ring-stone-100 focus:border-stone-200 outline-none transition-all duration-300 text-stone-700 placeholder:text-stone-300"
+                                className="w-full px-6 py-4 bg-stone-50/50 dark:bg-stone-800/50 border border-stone-100 dark:border-stone-800 rounded-2xl focus:bg-white dark:focus:bg-stone-800 focus:ring-4 focus:ring-stone-100 dark:focus:ring-stone-800 focus:border-stone-200 dark:focus:border-stone-700 outline-none transition-all duration-300 text-stone-700 dark:text-stone-200 placeholder:text-stone-300 dark:placeholder:text-stone-600"
                                 placeholder="••••••••"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
@@ -74,13 +82,13 @@ function Login({ onLoginSuccess, onShowRegister }) {
                         </div>
 
                         {error && (
-                            <div className="p-4 bg-red-50/50 text-red-500 text-xs font-medium rounded-xl border border-red-100/50 animate-in fade-in zoom-in-95">
+                            <div className="p-4 bg-red-50/50 dark:bg-red-900/10 text-red-500 dark:text-red-400 text-xs font-medium rounded-xl border border-red-100/50 dark:border-red-900/20 animate-in fade-in zoom-in-95">
                                 {error}
                             </div>
                         )}
 
                         {success && (
-                            <div className="p-4 bg-emerald-50/50 text-emerald-600 text-xs font-medium rounded-xl border border-emerald-100/50 animate-in fade-in zoom-in-95">
+                            <div className="p-4 bg-emerald-50/50 dark:bg-emerald-900/10 text-emerald-600 dark:text-emerald-400 text-xs font-medium rounded-xl border border-emerald-100/50 dark:border-emerald-900/20 animate-in fade-in zoom-in-95">
                                 {success}
                             </div>
                         )}
@@ -88,23 +96,23 @@ function Login({ onLoginSuccess, onShowRegister }) {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full py-4.5 bg-stone-800 hover:bg-stone-900 text-white font-bold rounded-2xl transition-all duration-300 shadow-[0_10px_20px_-5px_rgba(0,0,0,0.2)] hover:shadow-[0_15px_25px_-5px_rgba(0,0,0,0.25)] hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                            className="w-full py-4.5 bg-stone-800 dark:bg-stone-100 hover:bg-stone-900 dark:hover:bg-white text-white dark:text-stone-950 font-bold rounded-2xl transition-all duration-300 shadow-[0_10px_20px_-5px_rgba(0,0,0,0.2)] dark:shadow-none hover:shadow-[0_15px_25px_-5px_rgba(0,0,0,0.25)] hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                         >
                             {loading ? (
                                 <span className="flex items-center justify-center gap-2">
-                                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                                    <span className="w-4 h-4 border-2 border-white/30 border-t-white dark:border-stone-950/30 dark:border-t-stone-950 rounded-full animate-spin"></span>
                                     Signing in...
                                 </span>
                             ) : 'Sign In'}
                         </button>
                     </form>
 
-                    <div className="mt-10 pt-8 border-t border-stone-100/80 text-center">
-                        <p className="text-stone-400 text-sm font-medium">
+                    <div className="mt-10 pt-8 border-t border-stone-100/80 dark:border-stone-800 text-center">
+                        <p className="text-stone-400 dark:text-stone-500 text-sm font-medium">
                             Don't have an account?{' '}
                             <button
                                 onClick={onShowRegister}
-                                className="text-stone-800 font-bold hover:text-stone-600 transition-colors underline underline-offset-4 decoration-stone-200 hover:decoration-stone-400"
+                                className="text-stone-800 dark:text-stone-100 font-bold hover:text-stone-600 dark:hover:text-stone-300 transition-colors underline underline-offset-4 decoration-stone-200 dark:decoration-stone-800 hover:decoration-stone-400 dark:hover:decoration-stone-600"
                             >
                                 Register here
                             </button>
@@ -113,7 +121,7 @@ function Login({ onLoginSuccess, onShowRegister }) {
                 </div>
 
                 {/* Footer aesthetic text */}
-                <p className="text-center mt-8 text-stone-300 text-[10px] uppercase tracking-[0.2em] font-bold">
+                <p className="text-center mt-8 text-stone-300 dark:text-stone-600 text-[10px] uppercase tracking-[0.2em] font-bold">
                     Made for your future self
                 </p>
             </div>

@@ -33,6 +33,14 @@ export const api = {
                 body: formData
             });
             return response.json();
+        },
+        changePassword: async (userId, currentPassword, newPassword) => {
+            const response = await fetch(`${API_BASE_URL}/auth/change_password.php`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: userId, current_password: currentPassword, new_password: newPassword })
+            });
+            return response.json();
         }
     },
     letters: {

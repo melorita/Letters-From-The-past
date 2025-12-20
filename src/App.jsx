@@ -19,6 +19,25 @@ function App() {
   const [activeView, setActiveView] = useState('home'); // 'home', 'settings', 'trends', 'profile'
   const [letters, setLetters] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const saved = localStorage.getItem('capsule_theme');
+    return saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  });
+
+  // Apply dark mode class
+  useEffect(() => {
+    const root = window.document.documentElement;
+
+    if (isDarkMode === true) {
+      root.classList.add('dark');
+      root.style.colorScheme = 'dark';
+      localStorage.setItem('capsule_theme', 'dark');
+    } else {
+      root.classList.remove('dark');
+      root.style.colorScheme = 'light';
+      localStorage.setItem('capsule_theme', 'light');
+    }
+  }, [isDarkMode]);
 
   // Fetch letters when user logs in
   useEffect(() => {
@@ -113,6 +132,11 @@ function App() {
           setLetters={setLetters}
           onBack={() => setActiveView('home')}
           onDeleteAll={deleteAllLetters}
+          isDarkMode={isDarkMode}
+          onToggleDarkMode={() => {
+            console.log("Toggling dark mode to", !isDarkMode);
+            setIsDarkMode(prev => !prev);
+          }}
         />;
       case 'trends':
         return <Trends letters={letters} onBack={() => setActiveView('home')} />;
@@ -130,7 +154,7 @@ function App() {
 
   if (!user) {
     return (
-      <div className="min-h-screen flex flex-col bg-[#f7f9f7] text-stone-800 font-sans relative">
+      <div className="min-h-screen flex flex-col bg-[#f7f9f7] dark:bg-stone-950 text-stone-800 dark:text-stone-200 font-sans relative transition-colors duration-300">
         {/* Background decorative elements */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-[-10%] right-[-5%] w-[40%] h-[40%] bg-stone-100 rounded-full blur-[100px] opacity-60"></div>
@@ -163,7 +187,7 @@ function App() {
   }
 
   return (
-    <div className="h-screen flex flex-col bg-[#f7f9f7] text-stone-800 font-sans selection:bg-stone-200 overflow-hidden animate-in fade-in duration-1000">
+    <div className="h-screen flex flex-col bg-[#f7f9f7] dark:bg-stone-950 text-stone-800 dark:text-stone-200 font-sans selection:bg-stone-200 dark:selection:bg-stone-800 overflow-hidden animate-in fade-in duration-1000 transition-colors duration-300">
       <Header onShowProfile={() => setActiveView('profile')} user={user} />
 
       {/* Scrollable Container with centered content */}
@@ -187,10 +211,10 @@ function App() {
 
           {/* Right Column: Timeline (Sticky/Fixed) */}
           <aside className="lg:col-span-4 h-full overflow-hidden hidden lg:flex flex-col pb-6">
-            <div className="bg-white/50 backdrop-blur-sm p-4 rounded-3xl border border-stone-100 flex-1 flex flex-col min-h-0">
+            <div className="bg-white/50 dark:bg-stone-900/50 backdrop-blur-sm p-4 rounded-3xl border border-stone-100 dark:border-stone-800 flex-1 flex flex-col min-h-0 transition-colors">
               <div className="flex items-center gap-3 mb-4 px-2 pt-2 flex-shrink-0">
                 <span className="text-xl">🕰️</span>
-                <span className="text-stone-500 text-sm tracking-widest uppercase font-bold">Timeline</span>
+                <span className="text-stone-500 dark:text-stone-400 text-sm tracking-widest uppercase font-bold">Timeline</span>
               </div>
               <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
                 <LetterList letters={letters} refreshLetters={fetchLetters} onDelete={deleteLetter} />
