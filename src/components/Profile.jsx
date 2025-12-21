@@ -3,7 +3,12 @@ import { api } from '../services/api';
 
 function Profile({ user, onUpdate, onLogout, onBack }) {
     const [name, setName] = useState(user.name || '');
-    const [profilePic, setProfilePic] = useState(user.profile_pic || '');
+    const [imgError, setImgError] = useState(false);
+
+    // Filter out old invalid paths from initial state
+    const initialPic = (user.profile_pic && !user.profile_pic.includes('/letter/backend/')) ? user.profile_pic : '';
+    const [profilePic, setProfilePic] = useState(initialPic);
+
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmNewPassword, setConfirmNewPassword] = useState('');
@@ -33,6 +38,7 @@ function Profile({ user, onUpdate, onLogout, onBack }) {
 
         setUploading(true);
         setMessage({ type: '', text: '' });
+        setImgError(false);
 
         const formData = new FormData();
         formData.append('avatar', file);
@@ -139,10 +145,17 @@ function Profile({ user, onUpdate, onLogout, onBack }) {
                 <div className="flex flex-col items-center mb-8">
                     <div className="relative">
                         <div className="w-24 h-24 bg-stone-50 dark:bg-stone-800 rounded-full flex items-center justify-center shadow-inner ring-4 ring-white dark:ring-stone-900 border border-stone-100 dark:border-stone-800 overflow-hidden relative transition-all">
-                            {profilePic ? (
-                                <img src={profilePic} alt="Profile" className="w-full h-full object-cover" />
+                            {profilePic && !imgError ? (
+                                <img
+                                    src={profilePic}
+                                    alt=""
+                                    className="w-full h-full object-cover"
+                                    onError={() => setImgError(true)}
+                                />
                             ) : (
-                                <span className="text-4xl opacity-30 dark:opacity-50">👤</span>
+                                <span className="text-3xl font-bold text-stone-300 dark:text-stone-600 uppercase">
+                                    {(name || user.email || "?")[0]}
+                                </span>
                             )}
                             {uploading && (
                                 <div className="absolute inset-0 bg-black/30 flex items-center justify-center backdrop-blur-sm">

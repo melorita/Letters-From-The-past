@@ -1,12 +1,22 @@
-const API_BASE_URL = 'http://localhost/letter/backend/api';
+const API_BASE_URL = 'http://localhost/Letters-From-The-past/backend/api';
 
 const handleResponse = async (response) => {
     const text = await response.text();
     try {
+        if (!response.ok) {
+            // Include status code in the error message for better debugging
+            console.error(`API Error: ${response.status} ${response.statusText}`, text);
+            try {
+                const errorData = JSON.parse(text);
+                return { status: 'error', message: errorData.message || `Server error (${response.status})` };
+            } catch (e) {
+                return { status: 'error', message: `Server error (${response.status}): ${text.substring(0, 50)}` };
+            }
+        }
         return JSON.parse(text);
     } catch (err) {
         console.error('API Error: Non-JSON response', text);
-        return { status: 'error', message: 'Server returned an invalid response.' };
+        return { status: 'error', message: 'Server returned an invalid response. Please check if the backend is running and the database is connected.' };
     }
 };
 

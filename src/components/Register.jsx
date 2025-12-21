@@ -63,7 +63,10 @@ function Register({ onRegisterSuccess, onShowLogin }) {
                 setError(data.message || 'Registration failed');
             }
         } catch (err) {
-            setError('An error occurred. Please try again.');
+            console.error('Registration error:', err);
+            setError(err.message === 'Failed to fetch'
+                ? 'Cannot connect to the server. Please ensure XAMPP (Apache) is running.'
+                : 'An unexpected error occurred. Please try again.');
         } finally {
             if (!success) setLoading(false);
         }

@@ -30,11 +30,23 @@ function Header({ onShowProfile, user }) {
                             </p>
                         </div>
                         <div className="w-10 h-10 bg-stone-50 dark:bg-stone-800 rounded-2xl flex items-center justify-center ring-1 ring-stone-100 dark:ring-stone-700 group-hover:ring-stone-200 dark:group-hover:ring-stone-600 group-hover:bg-white dark:group-hover:bg-stone-700 transition-all overflow-hidden shadow-sm">
-                            {user.profile_pic ? (
-                                <img src={user.profile_pic} alt="Profile" className="w-full h-full object-cover" />
-                            ) : (
-                                <span className="text-lg">👤</span>
-                            )}
+                            {user.profile_pic && !user.profile_pic.includes('/letter/backend/') ? (
+                                <img
+                                    src={user.profile_pic}
+                                    alt=""
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                        e.target.style.display = 'none';
+                                        e.target.nextSibling.style.display = 'block';
+                                    }}
+                                />
+                            ) : null}
+                            <span
+                                className="text-sm font-bold text-stone-500 dark:text-stone-400 uppercase"
+                                style={{ display: user.profile_pic && !user.profile_pic.includes('/letter/backend/') ? 'none' : 'block' }}
+                            >
+                                {(user.name || user.email || "?")[0]}
+                            </span>
                         </div>
                     </button>
                 )}

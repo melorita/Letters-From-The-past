@@ -40,9 +40,9 @@ if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === UPLOAD_ERR_OK) {
             
             $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https://" : "http://";
             $host = $_SERVER['HTTP_HOST'];
-            // This assumes the script is inside /letter/backend/api/auth/
-            // So we need to go up two levels to get to /letter/backend/
-            $path = "/letter/backend/uploads/" . $newFileName;
+            // This assumes the script is inside /Letters-From-The-past/backend/api/auth/
+            // So we need to go up two levels to get to /Letters-From-The-past/backend/
+            $path = "/Letters-From-The-past/backend/uploads/" . $newFileName;
             
             $url = $protocol . $host . $path;
 

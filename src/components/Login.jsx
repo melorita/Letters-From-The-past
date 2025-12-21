@@ -34,7 +34,10 @@ function Login({ onLoginSuccess, onShowRegister }) {
                 setError(data.message || 'Login failed');
             }
         } catch (err) {
-            setError('An error occurred. Please try again.');
+            console.error('Login error:', err);
+            setError(err.message === 'Failed to fetch'
+                ? 'Cannot connect to the server. Please ensure XAMPP (Apache) is running and the backend URL is correct.'
+                : 'An unexpected error occurred. Please try again.');
         } finally {
             if (!success) setLoading(false);
         }
