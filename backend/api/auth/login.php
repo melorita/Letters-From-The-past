@@ -15,7 +15,7 @@ $data = json_decode(file_get_contents("php://input"));
 
 if (!empty($data->email) && !empty($data->password)) {
     try {
-        $stmt = $pdo->prepare("SELECT id, email, name, profile_pic, password_hash FROM users WHERE email = ?");
+        $stmt = $pdo->prepare("SELECT id, email, name, profile_pic, email_notifications, early_reminders, password_hash FROM users WHERE email = ?");
         $stmt->execute([$data->email]);
         $user = $stmt->fetch();
 
@@ -30,7 +30,9 @@ if (!empty($data->email) && !empty($data->password)) {
                     "id" => $user['id'],
                     "email" => $user['email'],
                     "name" => $user['name'],
-                    "profile_pic" => $user['profile_pic']
+                    "profile_pic" => $user['profile_pic'],
+                    "email_notifications" => (bool)$user['email_notifications'],
+                    "early_reminders" => (bool)$user['early_reminders']
                 ]
             ]);
         } else {

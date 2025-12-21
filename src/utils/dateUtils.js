@@ -25,5 +25,5 @@ export const getTimeDifference = (targetDate) => {
     if (diffTime <= 0) return 'Ready to open';
 
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return `Opens in ${diffDays} day${diffDays !== 1 ? 's' : ''}`;
+    return `${diffDays} day${diffDays !== 1 ? 's' : ''} left`;
 };

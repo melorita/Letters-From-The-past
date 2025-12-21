@@ -8,6 +8,7 @@ import Trends from './components/Trends';
 import Login from './components/Login';
 import Register from './components/Register';
 import Profile from './components/Profile';
+import LetterCard from './components/LetterCard';
 import { api } from './services/api';
 
 function App() {
@@ -16,7 +17,8 @@ function App() {
     return saved ? JSON.parse(saved) : null;
   });
   const [authMode, setAuthMode] = useState('login'); // 'login' or 'register'
-  const [activeView, setActiveView] = useState('home'); // 'home', 'settings', 'trends', 'profile'
+  const [activeLetter, setActiveLetter] = useState(null);
+  const [activeView, setActiveView] = useState('home'); // 'home', 'settings', 'trends', 'profile', 'view'
   const [letters, setLetters] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -48,7 +50,11 @@ function App() {
 
   const fetchLetters = async () => {
     if (!user) return;
-    setLoading(true);
+
+    // Only show loading spinner on initial load to prevent UI "blinks"
+    const isInitialLoad = letters.length === 0;
+    if (isInitialLoad) setLoading(true);
+
     try {
       const data = await api.letters.list(user.id);
       if (data.status === 'success') {
@@ -57,7 +63,7 @@ function App() {
     } catch (err) {
       console.error("Failed to fetch letters", err);
     } finally {
-      setLoading(false);
+      if (isInitialLoad) setLoading(false);
     }
   };
 
@@ -128,6 +134,8 @@ function App() {
     switch (activeView) {
       case 'settings':
         return <Settings
+          user={user}
+          onUpdate={handleUpdateUser}
           letters={letters}
           setLetters={setLetters}
           onBack={() => setActiveView('home')}
@@ -146,6 +154,16 @@ function App() {
           onUpdate={handleUpdateUser}
           onLogout={handleLogout}
           onBack={() => setActiveView('home')}
+        />;
+      case 'view':
+        return <LetterCard
+          letter={activeLetter}
+          onBack={() => setActiveView('home')}
+          onDelete={(id) => {
+            deleteLetter(id);
+            setActiveView('home');
+          }}
+          isFullView={true}
         />;
       default:
         return <LetterForm onSave={addLetter} />;
@@ -202,9 +220,9 @@ function App() {
 
           {/* Center Column: Scrollable Content (Form or Pages) */}
           <main className="lg:col-span-5 h-full overflow-y-auto pb-20 no-scrollbar">
-            {loading ? (
-              <div className="flex items-center justify-center h-40">
-                <div className="animate-spin text-2xl">⌛</div>
+            {activeView === 'home' && loading ? (
+              <div className="flex items-center justify-center h-40 animate-pulse">
+                <div className="text-stone-300 font-serif italic">Loading your timeline...</div>
               </div>
             ) : renderContent()}
           </main>
@@ -217,7 +235,15 @@ function App() {
                 <span className="text-stone-500 dark:text-stone-400 text-sm tracking-widest uppercase font-bold">Timeline</span>
               </div>
               <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
-                <LetterList letters={letters} refreshLetters={fetchLetters} onDelete={deleteLetter} />
+                <LetterList
+                  letters={letters}
+                  refreshLetters={fetchLetters}
+                  onDelete={deleteLetter}
+                  onLetterClick={(letter) => {
+                    setActiveLetter(letter);
+                    setActiveView('view');
+                  }}
+                />
               </div>
             </div>
           </aside>

@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { api } from '../services/api';
 
 function Profile({ user, onUpdate, onLogout, onBack }) {
@@ -18,6 +18,14 @@ function Profile({ user, onUpdate, onLogout, onBack }) {
     const [uploading, setUploading] = useState(false);
     const [message, setMessage] = useState({ type: '', text: '' });
     const fileInputRef = useRef(null);
+    const messageRef = useRef(null);
+
+    // Auto-scroll to message when it appears
+    useEffect(() => {
+        if (message.text && messageRef.current) {
+            messageRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }, [message.text]);
 
     const handleFileChange = async (e) => {
         const file = e.target.files[0];
@@ -47,7 +55,7 @@ function Profile({ user, onUpdate, onLogout, onBack }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        setMessage({ type: '', text: '' });
+        setMessage({ type: 'info', text: 'Processing your request...' });
 
         try {
             // 1. Update Profile (Name/Pic)
@@ -63,8 +71,15 @@ function Profile({ user, onUpdate, onLogout, onBack }) {
                 return;
             }
 
+            let isPasswordChanged = false;
+
             // 2. Optional: Change Password
             if (isEditingPassword && currentPassword && newPassword) {
+                if (currentPassword === newPassword) {
+                    setMessage({ type: 'error', text: 'New password cannot be the same as current password.' });
+                    setLoading(false);
+                    return;
+                }
                 if (newPassword !== confirmNewPassword) {
                     setMessage({ type: 'error', text: 'New passwords do not match.' });
                     setLoading(false);
@@ -81,10 +96,14 @@ function Profile({ user, onUpdate, onLogout, onBack }) {
                 setNewPassword('');
                 setConfirmNewPassword('');
                 setIsEditingPassword(false);
+                isPasswordChanged = true;
             }
 
             onUpdate(profileData.user);
-            setMessage({ type: 'success', text: 'Changes saved successfully!' });
+            setMessage({
+                type: 'success',
+                text: isPasswordChanged ? 'You have successfully changed your password!' : 'Changes saved successfully!'
+            });
         } catch (err) {
             setMessage({ type: 'error', text: 'An error occurred. Please try again.' });
         } finally {
@@ -212,12 +231,16 @@ function Profile({ user, onUpdate, onLogout, onBack }) {
 
                     <div className="pt-2 space-y-4">
                         {message.text && (
-                            <div className={`p-4 rounded-2xl text-xs font-medium border animate-in fade-in zoom-in-95 ${message.type === 'success' ? 'bg-emerald-50 dark:bg-emerald-900/10 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-900/20' : 'bg-red-50 dark:bg-red-900/10 text-red-500 dark:text-red-400 border-red-100 dark:border-red-900/20'
+                            <div ref={messageRef} className={`p-4 rounded-2xl text-sm font-medium border shadow-sm animate-in fade-in zoom-in-95 duration-300 ${message.type === 'success' ? 'bg-emerald-50 dark:bg-emerald-900/10 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-900/20' :
+                                message.type === 'info' ? 'bg-stone-50 dark:bg-stone-800/50 text-stone-600 dark:text-stone-300 border-stone-200 dark:border-stone-700 animate-pulse' :
+                                    'bg-red-50 dark:bg-red-900/10 text-red-500 dark:text-red-400 border-red-100 dark:border-red-900/20'
                                 }`}>
-                                {message.text}
+                                <div className="flex items-center gap-2">
+                                    <span>{message.type === 'success' ? '✅' : message.type === 'info' ? '⏳' : '❌'}</span>
+                                    {message.text}
+                                </div>
                             </div>
                         )}
-
                         <button
                             type="submit"
                             disabled={loading}

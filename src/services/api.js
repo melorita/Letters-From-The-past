@@ -1,5 +1,15 @@
 const API_BASE_URL = 'http://localhost/letter/backend/api';
 
+const handleResponse = async (response) => {
+    const text = await response.text();
+    try {
+        return JSON.parse(text);
+    } catch (err) {
+        console.error('API Error: Non-JSON response', text);
+        return { status: 'error', message: 'Server returned an invalid response.' };
+    }
+};
+
 export const api = {
     auth: {
         login: async (email, password) => {
@@ -8,7 +18,7 @@ export const api = {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
             });
-            return response.json();
+            return handleResponse(response);
         },
         register: async (email, password, name) => {
             const response = await fetch(`${API_BASE_URL}/auth/register.php`, {
@@ -16,7 +26,7 @@ export const api = {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password, name })
             });
-            return response.json();
+            return handleResponse(response);
         },
         updateProfile: async (userData) => {
             const response = await fetch(`${API_BASE_URL}/auth/update_profile.php`, {
@@ -24,15 +34,14 @@ export const api = {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(userData)
             });
-            return response.json();
+            return handleResponse(response);
         },
         uploadAvatar: async (formData) => {
             const response = await fetch(`${API_BASE_URL}/auth/upload_avatar.php`, {
                 method: 'POST',
-                // No Content-Type header needed; fetch sets it automatically for FormData
                 body: formData
             });
-            return response.json();
+            return handleResponse(response);
         },
         changePassword: async (userId, currentPassword, newPassword) => {
             const response = await fetch(`${API_BASE_URL}/auth/change_password.php`, {
@@ -40,13 +49,13 @@ export const api = {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ user_id: userId, current_password: currentPassword, new_password: newPassword })
             });
-            return response.json();
+            return handleResponse(response);
         }
     },
     letters: {
         list: async (userId) => {
             const response = await fetch(`${API_BASE_URL}/letters/list.php?user_id=${userId}`);
-            return response.json();
+            return handleResponse(response);
         },
         create: async (userId, letterData) => {
             const response = await fetch(`${API_BASE_URL}/letters/create.php`, {
@@ -54,11 +63,11 @@ export const api = {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ user_id: userId, ...letterData })
             });
-            return response.json();
+            return handleResponse(response);
         },
         view: async (id, userId) => {
             const response = await fetch(`${API_BASE_URL}/letters/view.php?id=${id}&user_id=${userId}`);
-            return response.json();
+            return handleResponse(response);
         },
         open: async (id) => {
             const response = await fetch(`${API_BASE_URL}/letters/open.php`, {
@@ -66,19 +75,19 @@ export const api = {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id })
             });
-            return response.json();
+            return handleResponse(response);
         },
         delete: async (id, user_id) => {
             const response = await fetch(`${API_BASE_URL}/letters/delete.php?id=${id}&user_id=${user_id}`, {
                 method: 'DELETE'
             });
-            return response.json();
+            return handleResponse(response);
         },
         deleteAll: async (user_id) => {
             const response = await fetch(`${API_BASE_URL}/letters/delete_all.php?user_id=${user_id}`, {
                 method: 'DELETE'
             });
-            return response.json();
+            return handleResponse(response);
         }
     }
 };
