@@ -77,7 +77,7 @@ function LetterForm({ onSave }) {
                         type="text"
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
-                        placeholder="e.g. A note for a rainy day"
+                        placeholder="e.g. A note about your day"
                         className="w-full p-4 rounded-xl bg-stone-50 dark:bg-stone-800/50 border-2 border-transparent focus:bg-white dark:focus:bg-stone-800 focus:border-stone-200 dark:focus:border-stone-700 focus:outline-none transition-all placeholder:text-stone-300 dark:placeholder:text-stone-600 font-medium dark:text-stone-200"
                     />
                 </div>
