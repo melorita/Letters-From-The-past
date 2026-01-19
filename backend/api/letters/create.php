@@ -24,7 +24,11 @@ if (
         $title = $data->title ?? 'Untitled Letter';
         $mood = $data->mood ?? null;
 
-        if ($stmt->execute([$data->user_id, $title, $data->message, $mood, $data->unlock_date])) {
+        // Encrypt message
+        require_once '../../config/encryption.php';
+        $encrypted_message = encryptData($data->message);
+
+        if ($stmt->execute([$data->user_id, $title, $encrypted_message, $mood, $data->unlock_date])) {
             http_response_code(201);
             echo json_encode([
                 "status" => "success",

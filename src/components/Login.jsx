@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { api } from '../services/api';
 
-function Login({ onLoginSuccess, onShowRegister }) {
+function Login({ onLoginSuccess, onShowRegister, onForgotPassword }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -13,8 +13,8 @@ function Login({ onLoginSuccess, onShowRegister }) {
         setError('');
         setSuccess('');
 
-        // Strict Email Validation
-        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,10}$/;
+        // Standard Email Validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
             setError('Please enter a valid email address (e.g., name@gmail.com)');
             return;
@@ -82,6 +82,16 @@ function Login({ onLoginSuccess, onShowRegister }) {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                             />
+                        </div>
+
+                        <div className="flex justify-end -mt-3 mb-2">
+                            <button
+                                type="button"
+                                onClick={onForgotPassword}
+                                className="text-xs font-bold text-stone-400 dark:text-stone-500 hover:text-stone-600 dark:hover:text-stone-300 transition-colors"
+                            >
+                                Forgot Password?
+                            </button>
                         </div>
 
                         {error && (

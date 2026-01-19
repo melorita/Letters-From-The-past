@@ -15,8 +15,8 @@ function Register({ onRegisterSuccess, onShowLogin }) {
         setError('');
         setSuccess('');
 
-        // Strict Email Validation
-        const emailRegex = /^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9.-]+\.[a-zA-Z]{2,10})$/;
+        // Standard Email Validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const match = email.match(emailRegex);
 
         if (!match) {
@@ -24,26 +24,7 @@ function Register({ onRegisterSuccess, onShowLogin }) {
             return;
         }
 
-        const domain = match[1].toLowerCase();
-        const commonProviders = [
-            'gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com',
-            'icloud.com', 'me.com', 'live.com', 'aol.com', 'protonmail.com',
-            'zoho.com', 'mail.com'
-        ];
 
-        // Ensure it's a common provider or at least not a niche/placeholder domain
-        const isCommon = commonProviders.some(p => domain === p || domain.endsWith('.' + p));
-
-        if (!isCommon && !domain.includes('.edu') && !domain.includes('.org')) {
-            setError('Please use a valid email');
-            return;
-        }
-
-        // Specifically block the one mentioned by user and previous placeholder
-        if (domain === 'smail.com' || domain === 'future.me') {
-            setError('Please use a valid email');
-            return;
-        }
 
         if (password !== confirmPassword) {
             setError('Passwords do not match');

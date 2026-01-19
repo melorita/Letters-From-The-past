@@ -25,6 +25,14 @@ if ($user_id) {
         $stmt->execute([$user_id]);
         $letters = $stmt->fetchAll();
 
+        // Decrypt opened letters
+        require_once '../../config/encryption.php';
+        foreach ($letters as &$letter) {
+            if ($letter['message'] !== null) {
+                $letter['message'] = decryptData($letter['message']);
+            }
+        }
+
         echo json_encode([
             "status" => "success",
             "letters" => $letters

@@ -7,6 +7,8 @@ import Settings from './components/Settings';
 import Trends from './components/Trends';
 import Login from './components/Login';
 import Register from './components/Register';
+import ForgotPassword from './components/ForgotPassword';
+import ResetPassword from './components/ResetPassword';
 import Profile from './components/Profile';
 import LetterCard from './components/LetterCard';
 import { api } from './services/api';
@@ -56,7 +58,9 @@ function App() {
     if (isInitialLoad) setLoading(true);
 
     try {
+      console.log("Fetching letters for user:", user.id);
       const data = await api.letters.list(user.id);
+      console.log("Fetch response:", data);
       if (data.status === 'success') {
         setLetters(data.letters);
       }
@@ -170,6 +174,54 @@ function App() {
     }
   };
 
+  // Handle URL routing for reset password
+  useEffect(() => {
+    const path = window.location.pathname;
+    if (path === '/reset-password') {
+      setAuthMode('reset-password');
+    }
+  }, []);
+
+  const renderAuthContent = () => {
+    switch (authMode) {
+      case 'register':
+        return (
+          <Register
+            onRegisterSuccess={handleLogin}
+            onShowLogin={() => setAuthMode('login')}
+          />
+        );
+      case 'forgot-password':
+        return (
+          <ForgotPassword
+            onBack={() => setAuthMode('login')}
+          />
+        );
+      case 'reset-password':
+        const urlParams = new URLSearchParams(window.location.search);
+        return (
+          <ResetPassword
+            onLogin={() => {
+              setAuthMode('login');
+              // Clear the URL
+              window.history.pushState({}, '', '/');
+            }}
+            token={urlParams.get('token')}
+            email={urlParams.get('email')}
+          />
+        );
+      case 'login':
+      default:
+        return (
+          <Login
+            onLoginSuccess={handleLogin}
+            onShowRegister={() => setAuthMode('register')}
+            onForgotPassword={() => setAuthMode('forgot-password')}
+          />
+        );
+    }
+  };
+
   if (!user) {
     return (
       <div className="min-h-screen flex flex-col bg-[#f7f9f7] dark:bg-stone-950 text-stone-800 dark:text-stone-200 font-sans relative transition-colors duration-300">
@@ -182,17 +234,7 @@ function App() {
         <Header />
         <main className="flex-1 flex flex-col items-center justify-center relative z-10 py-12 px-4">
           <div className="w-full max-w-md mx-auto">
-            {authMode === 'login' ? (
-              <Login
-                onLoginSuccess={handleLogin}
-                onShowRegister={() => setAuthMode('register')}
-              />
-            ) : (
-              <Register
-                onRegisterSuccess={handleLogin}
-                onShowLogin={() => setAuthMode('login')}
-              />
-            )}
+            {renderAuthContent()}
 
             {/* Footer aesthetic text */}
             <p className="text-center mt-8 text-stone-300 text-[10px] uppercase tracking-[0.2em] font-bold pb-10">

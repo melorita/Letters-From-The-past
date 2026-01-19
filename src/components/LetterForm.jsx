@@ -19,11 +19,11 @@ function LetterForm({ onSave }) {
     const [mood, setMood] = useState(MOODS[0]); // Default mood
     const [isSubmitted, setIsSubmitted] = useState(false);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (!content || !openDate) return;
 
-        onSave({
+        await onSave({
             title: title || 'Untitled Letter',
             message: content,
             unlock_date: openDate,

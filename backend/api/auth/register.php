@@ -29,10 +29,21 @@ if (!empty($data->email) && !empty($data->password)) {
         $password_hash = password_hash($data->password, PASSWORD_BCRYPT);
 
         if ($stmt->execute([$data->email, $password_hash, $data->name ?? null])) {
+            // Send Welcome Email
+            require_once '../../services/EmailService.php';
+            $emailService = new EmailService();
+            $emailService->sendEmail(
+                $data->email,
+                "Welcome to Letters From The Past",
+                "<h1>Welcome to Your Vault, " . htmlspecialchars($data->name ?? 'User') . "!</h1>
+                 <p>Thank you for joining. You can now start writing letters to your future self.</p>
+                 <p><a href='http://localhost:5173/login'>Login to your account</a></p>"
+            );
+
             http_response_code(201);
             echo json_encode([
                 "status" => "success",
-                "message" => "User was created.",
+                "message" => "User was created and welcome email sent.",
                 "user" => [
                     "id" => $pdo->lastInsertId(),
                     "email" => $data->email,

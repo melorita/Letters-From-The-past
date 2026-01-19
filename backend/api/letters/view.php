@@ -23,6 +23,10 @@ if ($id && $user_id) {
         if ($letter) {
             $today = date('Y-m-d');
             if ($today >= $letter['unlock_date']) {
+                // Decrypt message
+                require_once '../../config/encryption.php';
+                $letter['message'] = decryptData($letter['message']);
+
                 echo json_encode([
                     "status" => "open",
                     "letter" => $letter
